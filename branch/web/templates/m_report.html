@@ -1,0 +1,83 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.content-button');
+        const contentSections = document.querySelectorAll('[id^="content"]');
+
+        buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                const isVisible = contentSections[index].style.display === 'flex';
+
+                contentSections.forEach((section) => {
+                    section.style.display = 'none';
+                });
+
+                if (!isVisible) {
+                    contentSections[index].style.display = 'flex';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center rounded-lg p-5 mb-5 bg-[#1F2632]">
+    <h1 class="text-5xl font-bold text-white">Reports</h1>
+</div>
+
+
+<form method="post" action="/report.html" class="flex w-full flex-row items-center justify-start gap-5 rounded-lg p-5 h-auto bg-[#1F2632]">
+
+    <div class="flex flex-col gap-5">
+        <label class="flex flex-row gap-5 cursor-pointer">
+            <input type="checkbox" name="items" value="ta">
+            <p class="text-2xl font-bold text-white">Items</p>
+        </label>
+
+        <label class="flex flex-row gap-5 cursor-pointer">
+            <input type="checkbox" name="orders" value="ta">
+            <p class="text-2xl font-bold text-white">Orders</p>
+        </label>
+
+        <label class="flex flex-row gap-5 cursor-pointer">
+            <input type="checkbox" name="reservations" value="ta">
+            <p class="text-2xl font-bold text-white">Reservations</p>
+        </label>
+    </div>
+
+    <div class="flex flex-col items-center">
+        <label for="from" class="text-white">From</label>
+        <input type="date" name="from" class="rounded-lg p-5" required>
+
+        <label for="to" class="text-white">To</label>
+        <input type="date" name="to" class="rounded-lg p-5" required>
+    </div>
+
+    <div class="flex flex-col gap-5">
+        <label class="flex flex-row gap-5 cursor-pointer">
+            <input type="radio" name="interval" value="daily" checked>
+            <p class="text-2xl font-bold text-white">Daily</p>
+        </label>
+
+        <label class="flex flex-row gap-5 cursor-pointer">
+            <input type="radio" name="interval" value="weekly">
+            <p class="text-2xl font-bold text-white">Weekly</p>
+        </label>
+
+        <label class="flex flex-row gap-5 cursor-pointer">
+            <input type="radio" name="interval" value="monthly">
+            <p class="text-2xl font-bold text-white">Monthly</p>
+        </label>
+    </div>
+
+    <button type="submit" class="rounded-lg p-5 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Generate</button>
+
+</form>
+{% endblock %}

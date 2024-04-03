@@ -1,0 +1,32 @@
+{
+  "name": "web-interface",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tailwindcss -i ./src/input.css -o ./static/style.css --watch",
+    "electron": "electron .",
+    "build": "electron-builder --mac"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^27.0.3",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "is-electron": "^2.2.2"
+  },
+  "build": {
+    "appId": "your.id",
+    "productName": "HRMS",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dir"
+    }
+  }
+}

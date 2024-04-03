@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='style.css') }}" />
+        <script src="{{ url_for('static', filename = 'renderer.js') }}"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+        <title>
+            {% block title %}
+
+            {% endblock %}
+        </title>
+        <link rel="shortcut icon" type="image/jpg" href="{{ url_for('static', filename='logo.svg') }}"/>
+        {% block script %}
+
+        {% endblock %}
+    </head>
+
+    <body id="body" class="font-montserrat">
+        <div id="burger">
+            <script>
+                function popupOpenBurger() {
+                    var burgerMenu = document.getElementById("burgerMenu");
+                    var burgerButton = document.getElementById("burgerButton");
+                    var content = document.getElementById("pageContent");
+                    burgerMenu.style.transform = "translateX(100%)";
+                    burgerMenu.style.display = "grid";
+                    burgerMenu.classList.add("shadow-[0_0_10px_0_rgba(0,0,0,0.5)]");
+                    setTimeout(function() {
+                        burgerButton.classList.add("hidden")
+                        content.style.transform = "translateX(-80%)";
+                        content.style.transition = "transform 0.2s ease-out";
+                        burgerMenu.style.transform = "translateX(20%)";
+                        burgerMenu.style.transition = "transform 0.2s ease-out";
+                        document.body.style.overflow = "hidden";
+                    }, 10);
+                }
+
+                function popupCloseBurger() {
+                    var burgerMenu = document.getElementById("burgerMenu");
+                    var burgerButton = document.getElementById("burgerButton");
+                    var content = document.getElementById("pageContent");
+                    setTimeout(function() {
+                        burgerButton.classList.remove("hidden")
+                        content.style.transform = "translateX(0%)";
+                        content.style.transition = "transform 0.2s ease-out";
+                        burgerMenu.style.transform = "translateX(100%)";
+                        burgerMenu.style.transition = "transform 0.2s ease-out";
+                        document.body.style.overflow = "auto";
+                    }, 10);
+                    setTimeout(function() {
+                        burgerMenu.style.display = "none";
+                    }, 200);
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const navBar = document.getElementById("navBar");
+                    const navHeight = navBar.offsetHeight;
+
+                    window.addEventListener('scroll', () => {
+                        if (window.scrollY > navHeight) {
+                            navBar.classList.add("shadow-lg");
+                        } else {
+                            navBar.classList.remove("shadow-lg");
+                        }
+                    });
+                });
+            </script>
+
+            <div id="burgerMenu" class="fixed hidden grid-cols-11 grid-rows-[100px,_1fr,_0.6fr] mx-auto text-center w-screen h-screen bg-[#3AAFB9] text-white z-50">
+                <button class="col-start-6 col-end-10 m-1 lg:hidden flex justify-center items-center" onclick="popupCloseBurger()">
+                    <div class="space-y-2">
+                        <div class="w-10 h-1 bg-white rotate-45 translate-y-3"></div>
+                        <div class="w-10 h-1 bg-white opacity-0"></div>
+                        <div class="w-10 h-1 bg-white -rotate-45 -translate-y-3"></div>
+                    </div>
+                </button>
+
+                <div class="row-start-2 p-10 text-xl font-bold">
+                    <div class="m-10 w-max">
+                        <a href="{{ url_for('order_page') }}">Order Online</a>
+                    </div>
+                    <div class="m-10 w-max">
+                        <a href="{{ url_for('reserve_page') }}">Reservation</a>
+                    </div>
+                    <div class="m-10 w-max">
+                        <a href="{{ url_for('menu_page') }}">Menu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pageContent" class="min-h-screen">
+            <nav id="navBar" class="sticky grid grid-cols-11 h-[100px] w-full bg-[#3AAFB9] z-40">
+                <div class="col-start-2 col-end-8 lg:col-start-5 lg:col-end-8 flex flex-row items-center justify-center gap-5">
+                    <img class="rounded-full bg-white" src = "{{ url_for('static', filename='logo.svg') }}" width="80px" height="80px"/>
+                    <a class="flex flex-row items-center justify-center text-2xl font-bold text-white text-center" href="{{ url_for('index_page') }}">Horizon Restaurants</a>
+                </div>
+
+                <button class="row-start-1 col-start-9 col-end-12 m-1 lg:hidden flex justify-center items-center" onclick="popupOpenBurger()" id="burgerButton">
+                    <div class="space-y-2">
+                        <div class="w-10 h-1 bg-white"></div>
+                        <div class="w-10 h-1 bg-white"></div>
+                        <div class="w-10 h-1 bg-white"></div>
+                    </div>
+                </button>
+            </nav>
+
+            <main id="main">
+                {% block content %}
+
+                {% endblock %}
+            </main>
+
+            <footer id="footer" class="sticky top-[100vh]">
+                <div class="flex flex-row items-center justify-center p-5 bg-[#3AAFB9]">
+                    <p class="text-white">Hello</p>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

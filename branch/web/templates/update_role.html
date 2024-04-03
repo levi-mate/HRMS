@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+{% for employee in employees %}
+<form method="post" action="{{ url_for('account.change_employee_role', employee_id=employee.id) }}" class="flex flex-col items-center justify-start gap-5 rounded-lg p-5 h-screen bg-[#1F2632]">
+    <label for="role" class="text-2xl font-bold text-white">Name:</label>
+    <select name="role" class="rounded-lg p-5">
+        <option value="" selected disabled hidden>Choose Role</option>
+        <option value="S">Staff</option>
+        <option value="C">Chef</option>
+        <option value="M">Manager</option>
+    </select>
+
+    <input type="hidden" name="id" value="{{ employee.id }}">
+
+    <button type="submit" class="rounded-lg p-5 text-2xl font-bold text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Update Role</button>
+</form>
+{% endfor %}
+{% endblock %}

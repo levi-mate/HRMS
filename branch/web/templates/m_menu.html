@@ -1,0 +1,192 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.content-button');
+        const contentSections = document.querySelectorAll('[id^="content"]');
+
+        contentSections[0].style.display = 'flex';
+
+        buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                const isVisible = contentSections[index].style.display === 'flex';
+
+                contentSections.forEach((section) => {
+                    section.style.display = 'none';
+                });
+
+                if (!isVisible) {
+                    contentSections[index].style.display = 'flex';
+                }
+            });
+        });
+    });
+
+    function updateItem(item_id) {
+        window.location.href = '/update_menu_item/' + encodeURIComponent(item_id) + '/';
+    }
+
+    function updateCat(cat_id) {
+        window.location.href = '/update_menu_category/' + encodeURIComponent(cat_id) + '/';
+    }
+
+    function confirmDelete(cat_id) {
+        return confirm("Are you sure you want to delete this category: " + cat_id + "?");
+    }
+
+    function confirmDeleteItem(item_id) {
+        return confirm("Are you sure you want to delete this item: " + item_id + "?");
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center rounded-lg p-5 mb-5 bg-[#1F2632]">
+    <h1 class="text-5xl font-bold text-white">Menu Management</h1>
+</div>
+
+<div class="flex flex-row">
+    <div class="flex flex-col w-1/6 gap-5">
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">View Menu</h2>
+            </div>
+        </button>
+
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">Create Category</h2>
+            </div>
+        </button>
+
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">Create Item</h2>
+            </div>
+        </button>
+
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">Update/ Delete Category</h2>
+            </div>
+        </button>
+    </div>
+
+    <div class="w-5/6">
+        <div id="content1" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <div class="flex flex-col items-center justify-center">
+                    <h1 class="mb-3 text-xl font-bold text-white">Menu Category</h1>
+                    <select id="categoryDropdown" onchange="showMenuItems()" class="p-2 mb-3 rounded-lg">
+                        <option value="" selected disabled hidden>Select a Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.cat_id }}">{{ category.cat_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+        
+                {% for cat_id, items in items_by_category.items() %}
+                <div id="menuItems{{ cat_id }}" class="menu-items hidden">
+                    {% for item in items %}
+                    <div class="menu-item">
+                        <div class="p-2 m-2 rounded-lg bg-white">
+                            <p>Name: {{ item.item_name }}</p>
+                            <p>Price: £{{ item.price }}</p>
+                            <p>Description: {{ item.desc }}</p>
+                            <p>Allergens: {{ item.all_gens }}</p>
+                            <div class="flex flex-row gap-5 mt-2">
+                                <form action="{{ url_for('menu.delete_menu_item', item_id=item.item_id) }}" method="post" onsubmit="return confirmDeleteItem('{{ item.item_id }}')">
+                                    <button type="submit" class="rounded-lg p-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Delete</button>
+                                </form>
+
+                                <button class="rounded-lg p-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]" onclick="updateItem('{{ item.item_id }}')">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="content2" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <form method="post" action="/create_menu_category/" class="flex flex-col items-center gap-5 rounded-lg text-2xl font-bold">
+                    <h1 class="text-4xl text-white mb-5">Create New Menu Categories</h1>
+
+                    <label for="name" class="text-white">Category Name</label>
+                    <input type="text" name="name" class="rounded-lg p-5" required>
+
+                    <button type="submit" class="rounded-lg p-5 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Create Category</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="content3" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <form method="post" action="/create_menu_item/" class="flex flex-col items-center gap-5 rounded-lg text-2xl font-bold">
+                    <h1 class="text-4xl text-white mb-5">Create New Menu Items</h1>
+
+                    <select name="category" class="p-2 mb-3 rounded-lg">
+                        <option value="" selected disabled hidden>Select a Category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.cat_id }}">{{ category.cat_name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="price" class="text-white">Item Price</label>
+                    <input type="number" name="price" min="1" class="rounded-lg p-5" required>
+
+                    <label for="name" class="text-white">Item Name</label>
+                    <input type="text" name="name" class="rounded-lg p-5" required>
+
+                    <label for="desc" class="text-white">Item Description</label>
+                    <input type="text" name="desc" class="rounded-lg p-5" required>
+
+                    <label for="all_gens" class="text-white">Item Allergens</label>
+                    <input type="text" name="all_gens" class="rounded-lg p-5" required>
+
+                    <button type="submit" class="rounded-lg p-5 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Create Item</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="content4" class="hidden flex-col items-center rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                {% for category in categories %}
+                <div class="flex flex-row items-center justify-center gap-5 my-5">
+                    <p class="text-xl font-bold text-white">{{ category.cat_name }}</p>
+                    <form action="{{ url_for('menu.delete_menu_category', cat_id=category.cat_id) }}" method="post" onsubmit="return confirmDelete('{{ category.cat_id }}')">
+                        <button type="submit" class="rounded-lg p-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Delete</button>
+                    </form>
+
+                    <button class="rounded-lg p-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]" onclick="updateCat('{{ category.cat_id }}')">Update</button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showMenuItems() {
+        const selectedCategoryId = document.getElementById('categoryDropdown').value;
+        const allMenuItems = document.querySelectorAll('.menu-items');
+        allMenuItems.forEach((item) => {
+            item.style.display = 'none';
+        });
+
+        if (selectedCategoryId) {
+            const selectedItemDiv = document.getElementById('menuItems' + selectedCategoryId);
+            if (selectedItemDiv) {
+                selectedItemDiv.style.display = 'block';
+            }
+        }
+    }
+</script>
+{% endblock %}

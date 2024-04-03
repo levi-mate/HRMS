@@ -1,0 +1,24 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+{% for res in reservation %}
+<form method="post" action="{{ url_for('reservation.update_reservation', res_id=res.id) }}" class="flex flex-col items-center justify-start gap-5 rounded-lg p-5 h-screen bg-[#1F2632]">
+    <label for="name" class="text-2xl font-bold text-white">Name:</label>
+    <input type="text" id="name" name="name" value="{{ res.name }}" class="rounded-lg p-5 text-2xl font-bold" required>
+
+    <input type="hidden" name="table_id" value="{{ res.table_id }}">
+    <input type="hidden" name="amount" value="{{ res.amount }}">
+    <input type="hidden" name="datetime" value="{{ res.datetime }}">
+
+    <button type="submit" class="rounded-lg p-5 text-2xl font-bold text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Update Reservation</button>
+</form>
+{% endfor %}
+{% endblock %}

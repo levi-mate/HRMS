@@ -1,0 +1,21 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+<div id="customerContent">
+    <div class="grid grid-cols-12 grid-rows-3 gap-5 p-5 bg-white">
+        <a class="col-start-3 col-end-11 row-start-1 rounded-lg p-5 text-xl font-bold text-white text-center bg-[#3AAFB9] hover:bg-[#2C848C]" href="{{ url_for('order_page') }}">Order Online</a>
+        
+        <a class="col-start-3 col-end-11 row-start-2 rounded-lg p-5 text-xl font-bold text-white text-center bg-[#3AAFB9] hover:bg-[#2C848C]" href="{{ url_for('reserve_page') }}">Reservation</a>
+
+        <a class="col-start-3 col-end-11 row-start-3 rounded-lg p-5 text-xl font-bold text-white text-center bg-[#3AAFB9] hover:bg-[#2C848C]" href="{{ url_for('menu_page') }}">Menu</a>
+    </div>
+</div>
+{% endblock %}

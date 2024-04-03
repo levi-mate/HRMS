@@ -1,0 +1,44 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <p class="p-5 mb-10 text-white font-bold text-2xl text-center">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<form method="post" action="/login/" id="manageContent" class="grid grid-cols-12 grid-rows-[1fr,_1fr,_1fr,_0.5fr] gap-5 p-5 py-20 rounded-lg bg-[#1F2632]">
+    <div class="col-start-4 col-end-10 row-start-1 flex flex-col items-center justify-center my-3">
+        <p class="text-2xl font-bold text-white">Forename</p>
+        <br/>
+        <input type="text" name="forename" class="border-2 rounded-lg text-2xl font-bold p-5" required/>
+    </div>
+
+    <div class="col-start-4 col-end-10 row-start-2 flex flex-col items-center justify-center my-3">
+        <p class="text-2xl font-bold text-white">Surname</p>
+        <br/>
+        <input type="text" name="surname" class="border-2 rounded-lg text-2xl font-bold p-5" required/>
+    </div>
+
+    <div class="col-start-4 col-end-10 row-start-3 flex flex-col items-center justify-center my-3">
+        <p class="text-2xl font-bold text-white">Password</p>
+        <br/>
+        <input type="password" name="password" class="border-2 rounded-lg text-2xl font-bold p-5" required/>
+    </div>
+
+    <div class="col-start-4 col-end-10 row-start-4 flex flex-row items-center justify-center my-3">
+        <!--<a class="text-2xl font-bold text-white text-center rounded-lg p-5 bg-[#3AAFB9] hover:bg-[#2C848C]" href="/">Login</a>-->
+        <button type="submit" class="text-2xl font-bold text-white text-center rounded-lg p-5 bg-[#3AAFB9] hover:bg-[#2C848C]">Login</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{{ url_for('menu.update_menu_item', item_id=item.id) }}" class="flex flex-col items-center justify-start gap-5 rounded-lg p-5 h-screen bg-[#1F2632]">
+    <label for="price" class="text-white">Item Price</label>
+    <input type="number" name="price" value="{{ item.price }}" min="1" class="rounded-lg p-5" required>
+
+    <label for="name" class="text-white">Item Name</label>
+    <input type="text" name="name" value="{{ item.name }}" class="rounded-lg p-5" required>
+
+    <label for="desc" class="text-white">Item Description</label>
+    <input type="text" name="desc" value="{{ item.description }}" class="rounded-lg p-5" required>
+
+    <label for="all_gens" class="text-white">Item Allergens</label>
+    <input type="text" name="all_gens" value="{{ item.allergens }}" class="rounded-lg p-5" required>
+
+    <button type="submit" class="rounded-lg p-5 text-2xl font-bold text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Update Item</button>
+</form>
+{% endblock %}

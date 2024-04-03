@@ -1,0 +1,77 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.content-button');
+        const contentSections = document.querySelectorAll('[id^="content"]');
+
+        buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                const isVisible = contentSections[index].style.display === 'flex';
+
+                contentSections.forEach((section) => {
+                    section.style.display = 'none';
+                });
+
+                if (!isVisible) {
+                    contentSections[index].style.display = 'flex';
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center rounded-lg p-5 mb-5 bg-[#1F2632]">
+    <h1 class="text-5xl font-bold text-white">Reservations Management</h1>
+</div>
+
+{% with messages = get_flashed_messages(category_filter=['error']) %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="flex flex-col items-center justify-center rounded-lg p-5 mb-5 bg-[#1F2632]">
+            <h1 class="text-2xl font-bold text-white text-center">{{ message }}</h1>
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="flex flex-row">
+    <div style="width: 75%">
+        <div id="content2" class="flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <form method="post" action="/reserve_at_branch2/" class="flex flex-col items-center gap-5">
+                <div class="flex flex-row items-center">
+                    <div class="flex flex-col items-center gap-5 rounded-lg text-2xl font-bold">
+                        {% for branch in branches %}
+                        <label class="flex flex-row gap-5 cursor-pointer">
+                            <input type="radio" name="url" value="{{ branch['url'] }}">
+                            <p class="text-2xl font-bold text-white">{{ branch['name'] }}</p>
+                        </label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col items-center gap-5 rounded-lg text-2xl font-bold">
+                        <label for="amount" class="text-white">Number of People</label>
+                        <input type="number" name="amount" min="1" class="rounded-lg p-5" required>
+
+                        <label for="name" class="text-white">Name</label>
+                        <input type="text" name="name" class="rounded-lg p-5" required>
+
+                        <label for="datetime" class="text-white">Date and Time</label>
+                        <input type="datetime-local" name="datetime" class="rounded-lg p-5" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="rounded-lg p-5 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Create Reservation</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

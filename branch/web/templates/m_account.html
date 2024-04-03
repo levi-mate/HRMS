@@ -1,0 +1,171 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.content-button');
+        const contentSections = document.querySelectorAll('[id^="content"]');
+
+        contentSections[0].style.display = 'flex';
+
+        buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                const isVisible = contentSections[index].style.display === 'flex';
+
+                contentSections.forEach((section) => {
+                    section.style.display = 'none';
+                });
+
+                if (!isVisible) {
+                    contentSections[index].style.display = 'flex';
+                }
+            });
+        });
+    });
+
+    function updateAccRole(employee_id) {
+        window.location.href = '/admin/update_role/' + encodeURIComponent(employee_id) + '/';
+    }
+
+    function updateAccPwd(employee_id) {
+        window.location.href = '/admin/update_password/' + encodeURIComponent(employee_id) + '/';
+    }
+
+    function confirmDelete(employee_id) {
+        return confirm("Are you sure you want to delete this account: " + employee_id + "?");
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center rounded-lg p-5 mb-5 bg-[#1F2632]">
+    <h1 class="text-5xl font-bold text-white">Accounts Management</h1>
+</div>
+
+<div class="flex flex-row">
+    <div class="flex flex-col w-1/6 gap-5">
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">View Employees</h2>
+            </div>
+        </button>
+
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">Create Employee</h2>
+            </div>
+        </button>
+
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">Delete Employees</h2>
+            </div>
+        </button>
+    </div>
+
+    <div class="w-5/6">
+        <div id="content1" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <table class="text-white w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Forename</th>
+                            <th class="text-center">Surname</th>
+                            <th class="text-center">Role</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr class="border-2 p-5">
+                            <td class="text-center">{{ employee.id }}</td>
+                            <td class="text-center">{{ employee.forename }}</td>
+                            <td class="text-center">{{ employee.surname }}</td>
+                            <td class="text-center">{{ employee.role }}</td>
+                            <td class="text-center">
+                                <button class="rounded-lg p-1 m-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]" onclick="updateAccRole('{{ employee.id }}')">Update Role</button>
+                            </td>
+                            <td class="text-center">
+                                <button class="rounded-lg p-1 m-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]" onclick="updateAccPwd('{{ employee.id }}')">Update Password</button>
+                            </td>
+                        </tr>
+                        {% else %}
+
+                        <tr>
+                            <td colspan="6" class="text-center">No Employees</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="content2" class="hidden flex-col items-center justify-center rounded-lg p-5 h-screen bg-[#1F2632]">
+            <div>
+                <form method="post" action="/admin/create_employee/" class="flex flex-col items-center gap-5 rounded-lg text-2xl font-bold">
+                    <h1 class="text-4xl text-white mb-5">Create New Employee</h1>
+
+                    <label for="forename" class="text-white">Forename</label>
+                    <input type="text" name="forename" class="rounded-lg p-5" required>
+
+                    <label for="surname" class="text-white">Surname</label>
+                    <input type="text" name="surname" class="rounded-lg p-5" required>
+
+                    <label for="password" class="text-white">Password</label>
+                    <input type="password" name="password" class="rounded-lg p-5" required>
+
+                    <label for="role" class="text-white">Role</label>
+                    <select name="role" class="rounded-lg p-5">
+                        <option value="S">Staff</option>
+                        <option value="C">Chef</option>
+                        <option value="M">Manager</option>
+                    </select>
+
+                    <button type="submit" class="rounded-lg p-5 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Create Employee</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="content3" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <table class="text-white w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Forename</th>
+                            <th class="text-center">Surname</th>
+                            <th class="text-center">Role</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr class="border-2 p-5">
+                            <td class="text-center">{{ employee.id }}</td>
+                            <td class="text-center">{{ employee.forename }}</td>
+                            <td class="text-center">{{ employee.surname }}</td>
+                            <td class="text-center">{{ employee.role }}</td>
+                            <td class="text-center">
+                                <form action="{{ url_for('account.delete_employee', employee_id=employee.id) }}" method="post" onsubmit="return confirmDelete('{{ employee.id }}')">
+                                    <button type="submit" class="rounded-lg p-1 m-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+
+                        <tr>
+                            <td colspan="5" class="text-center">No Employees</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

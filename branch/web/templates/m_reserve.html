@@ -1,0 +1,199 @@
+{% extends 'template.html' %}
+
+{% block title %}
+    Management
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.content-button');
+        const contentSections = document.querySelectorAll('[id^="content"]');
+
+        contentSections[0].style.display = 'flex';
+
+        buttons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                const isVisible = contentSections[index].style.display === 'flex';
+
+                contentSections.forEach((section) => {
+                    section.style.display = 'none';
+                });
+
+                if (!isVisible) {
+                    contentSections[index].style.display = 'flex';
+                }
+            });
+        });
+
+        const datetimeInput = document.querySelector('input[type="datetime-local"]');
+        if (datetimeInput) {
+            dateLimit(datetimeInput);
+
+            datetimeInput.addEventListener('change', function() {
+                adjustTime(this);
+            });
+        }
+    });
+
+    function updateRes(res_id) {
+        window.location.href = '/update_reservation/' + encodeURIComponent(res_id) + '/';
+    }
+
+    function confirmDelete(res_id) {
+        return confirm("Are you sure you want to delete this reservation: " + res_id + "?");
+    }
+
+    function dateLimit(datetimeInput) {
+        let currentDate = new Date();
+        currentDate.setDate(currentDate.getDate() + 1);
+
+        let minDate = currentDate.toISOString().split('T')[0];
+        datetimeInput.min = `${minDate}T10:00`;
+    }
+
+    function adjustTime(input) {
+        let selectedDate = new Date(input.value);
+        let minDate = selectedDate.toISOString().split('T')[0];
+
+        if (selectedDate.getHours() < 10) {
+            input.value = `${minDate}T10:00`;
+        } else if (selectedDate.getHours() >= 20) {
+            input.value = `${minDate}T20:00`;
+        }
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center rounded-lg p-5 mb-5 bg-[#1F2632]">
+    <h1 class="text-5xl font-bold text-white">Reservations Management</h1>
+</div>
+
+{% with messages = get_flashed_messages(category_filter=['error']) %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="flex flex-col items-center justify-center rounded-lg p-5 mb-5 bg-[#1F2632]">
+            <h1 class="text-2xl font-bold text-white text-center">{{ message }}</h1>
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="flex flex-row">
+    <div class="flex flex-col w-1/6 gap-5">
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">View Reservations</h2>
+            </div>
+        </button>
+
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">Create Reservation</h2>
+            </div>
+        </button>
+
+        <button class="content-button flex flex-col items-center justify-center rounded-lg p-5 mr-5 h-16 bg-[#1F2632] hover:bg-[#2F394B]">
+            <div>
+                <h2 class="text-md font-bold text-white">Cancel Reservations</h2>
+            </div>
+        </button>
+    </div>
+
+    <div class="w-5/6">
+        <div id="content1" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <table class="text-white w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Table No.</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center"># of People</th>
+                            <th class="text-center">Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for reservation in reservations %}
+                        <tr class="border-2 p-5">
+                            <td class="text-center">{{ reservation.id }}</td>
+                            <td class="text-center">{{ reservation.table_id }}</td>
+                            <td class="text-center">{{ reservation.name }}</td>
+                            <td class="text-center">{{ reservation.amount }}</td>
+                            <td class="text-center">{{ reservation.datetime.replace('T', ' ') }}</td>
+                            <td class="text-center">
+                                <button class="rounded-lg p-1 m-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]" onclick="updateRes('{{ reservation.id }}')">Update</button>
+                            </td>
+                        </tr>
+                        {% else %}
+
+                        <tr>
+                            <td colspan="6" class="text-center">No Reservations</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="content2" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <form method="post" action="/create_reservation/" class="flex flex-col items-center gap-5 rounded-lg text-2xl font-bold">
+                    <h1 class="text-4xl text-white mb-5">Create New Reservation</h1>
+
+                    <label for="amount" class="text-white">Number of People</label>
+                    <input type="number" name="amount" min="1" class="rounded-lg p-5" required>
+
+                    <label for="name" class="text-white">Name</label>
+                    <input type="text" name="name" class="rounded-lg p-5" required>
+
+                    <label for="datetime" class="text-white">Date and Time</label>
+                    <input type="datetime-local" name="datetime" class="rounded-lg p-5" required>
+
+                    <button type="submit" class="rounded-lg p-5 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Create Reservation</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="content3" class="hidden flex-col rounded-lg p-5 h-auto bg-[#1F2632]">
+            <div>
+                <table class="text-white w-full">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Table No.</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center"># of People</th>
+                            <th class="text-center">Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for reservation in reservations %}
+                        <tr class="border-2 p-5">
+                            <td class="text-center">{{ reservation.id }}</td>
+                            <td class="text-center">{{ reservation.table_id }}</td>
+                            <td class="text-center">{{ reservation.name }}</td>
+                            <td class="text-center">{{ reservation.amount }}</td>
+                            <td class="text-center">{{ reservation.datetime.replace('T', ' ') }}</td>
+                            <td class="text-center">
+                                <form action="{{ url_for('reservation.cancel_reservation', res_id=reservation.id) }}" method="post" onsubmit="return confirmDelete('{{ reservation.id }}')">
+                                    <button type="submit" class="rounded-lg p-1 m-2 text-white bg-[#3AAFB9] hover:bg-[#2C848C]">Cancel</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+
+                        <tr>
+                            <td colspan="6" class="text-center">No Reservations</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
